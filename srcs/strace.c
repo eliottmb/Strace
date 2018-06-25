@@ -9,16 +9,32 @@
 
 #define VALUE (4096)
 
+void	printit(int call, int ret)
+{
+	printf("call (%d) = %d\n", call, ret);
+}
+
 int	syswait(pid_t pid)
 {
-	int stat;
+	int 	stat;
+	int 	syscall;
+	int	ret;
 	
 	while(1)
 	{
-		ptrace(PTRACE_SYSCALL, pid, 0, 0);
+		//ptrace(PTRACE_SYSCALL, pid, 0, 0);
+		ptrace(PTRACE_SINGLESTEP, pid, 0, 0);
 		waitpid(pid, &stat, 0);
-		if (WIFSTOPPED(stat) && WSTOPSIG(stat) >= 128)
-			return (0);
+		//printf("sig = %d\n", WSTOPSIG(stat));
+		if (WIFSTOPPED(stat) && WSTOPSIG(stat) == SIGTRAP)
+		{
+			
+			//printf("Just catch signal\n");
+			syscall = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * ORIG_RAX);
+      			ret = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * RAX);
+			if (syscall > 0 && syscall < 313)
+				printit(syscall, ret);	
+		}
 		if (WIFEXITED(stat))
 			return (1);
 	}
@@ -34,11 +50,6 @@ int	forked(int argc, char **argv)
 	ptrace(PTRACE_TRACEME);
 	kill(getpid(), SIGSTOP);
 	return (execvp(ag[0], ag));
-}
-
-void	printit(int call, int ret)
-{
-	printf("call (%d) = %d\n", call, ret);
 }
 
 int	my_trace(pid_t pid)
