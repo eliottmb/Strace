@@ -18,14 +18,10 @@ int	syswait(pid_t pid)
 	int	params, params2;
 	while(1)
 	{
-		//ptrace(PTRACE_SYSCALL, pid, 0, 0);
 		ptrace(PTRACE_SINGLESTEP, pid, 0, 0);
 		waitpid(pid, &stat, 0);
-		//printf("sig = %d\n", WSTOPSIG(stat));
 		if (WIFSTOPPED(stat) && WSTOPSIG(stat) == SIGTRAP)
 		{
-			
-			//printf("Just catch signal\n");
 			syscall = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * ORIG_RAX);
 			//params = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * RBX);
 			//params2 = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * RCX);
