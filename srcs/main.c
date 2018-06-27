@@ -26,5 +26,5 @@ int	main(int argc, char **argv)
 		return (forked(argc - 1, argv + 1));
 	else
     		return (my_trace(pid));
-	return 0;
+	return (0);
 }

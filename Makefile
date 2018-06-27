@@ -5,7 +5,7 @@
 ## Syscall tracer
 ##
 
-CC	= gcc -I./include/
+CC	= gcc -g3 -I./include/
 
 RM	= rm -f
 
@@ -14,7 +14,8 @@ CFLAGS	+= -W -Wall -Wextra
 NAME		= strace
 
 SRCS		= srcs/main.c	\
-		  srcs/strace.c
+		  srcs/strace.c	\
+		  srcs/output.c
 
 OBJS		= $(SRCS:.c=.o)
 

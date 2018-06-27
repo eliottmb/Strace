@@ -23,5 +23,6 @@ int my_trace(pid_t pid);
 int syswait(pid_t pid);
 
 char *getstr(pid_t pid, unsigned long addr);
+//void	printit(pid_t pid, int call, int ret)
 
 #endif      /* __STRACE_H__ */

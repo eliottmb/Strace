@@ -2,17 +2,12 @@
 ** EPITECH PROJECT, 2018
 ** strargce
 ** File description:
-** Syscall trargcer
+** Syscall tracer
 */
 
 #include "strace.h"
 
 #define VALUE (4096)
-
-void	printit(int call, int ret)
-{
-	printf("call (%d) = %d\n", call, ret);
-}
 
 int	syswait(pid_t pid)
 {
@@ -20,6 +15,7 @@ int	syswait(pid_t pid)
 	int 	syscall;
 	int	ret;
 	
+	int	params, params2;
 	while(1)
 	{
 		//ptrace(PTRACE_SYSCALL, pid, 0, 0);
@@ -31,9 +27,11 @@ int	syswait(pid_t pid)
 			
 			//printf("Just catch signal\n");
 			syscall = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * ORIG_RAX);
+			//params = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * RBX);
+			//params2 = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * RCX);
       			ret = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * RAX);
 			if (syscall > 0 && syscall < 313)
-				printit(syscall, ret);	
+				printit(pid, syscall, ret);
 		}
 		if (WIFEXITED(stat))
 			return (1);
@@ -67,7 +65,7 @@ int	my_trace(pid_t pid)
       /*      	if (syswait(pid) != 0)
 	      	break;*/
 		ret = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * RAX);
-		printit(syscall, ret);
+		printit(pid, syscall, ret, 0, 0);
 	}
 	puts("----");
 	return (0);
@@ -77,7 +75,7 @@ char	*getstr(pid_t pid, unsigned long addr)
 {
 	char		*s = malloc(VALUE);
 	unsigned int	alloc = VALUE;
-	int		read;
+	int		read =0;
 	unsigned long	tmp;
 
 	while(1)
