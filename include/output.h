@@ -8,48 +8,66 @@
 #ifndef __OUTPUT_H__
 # define __OUTPUT_H__
 
+#include <sys/ptrace.h>
+#include <sys/reg.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
+#include <signal.h>
+#include <sys/user.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <elf.h>
+#include <poll.h>
+#include <sys/times.h>
+
 #include "strace.h"
 
 enum types {
-	INT,
-	UNSIGNED_INT,
-	INT_P,
-	SIZE_T,
-	SSIZE_T,
-	PID_T,
-	CHAR,
-	CHAR_P,
-	CONST_CHAR_P,
-	CHAR_P_CONST,
-	UNSIGNED_CHAR_P,
-	LONG,
-	UNSIGNED_LONG,
-	VOID,
-	VOID_P,
-	CONST_VOID_P,
-	MODE_T,
-	TIME_T,
-	TIME_T_P,
-	CONST_TIME_T_P,
-	DEV_T,
-	UID_T,
-	GID_T,
-	OFF_T,
-	OFF_T_P,
-	ENUM_PTRACE_REQUEST,
-	CONST_STRUCT_UTIMBUF_P,
-	CLOCK_T,
-	STRUCT_TMS_P,
-	SIGHANDLER_T,
-	VARGS,
-	STRUCT_STAT_P,
-	STRUCT_POLLFD_P,
-	NFDS_T,
-	CONST_STRUCT_SIGACTION_P,
-	STRUCT_SIGACTION_P,
-	CONST_SIGSET_T_P,
-	SIGSET_T_P,
-	CONST_STRUCT_IOVEC_P,
+	INT = sizeof(int),
+	UNSIGNED_INT = sizeof(unsigned int),
+	INT_P = sizeof(int *),
+	SIZE_T = sizeof(size_t),
+	SSIZE_T = sizeof(ssize_t),
+	PID_T = sizeof(pid_t),
+	CHAR = sizeof(char),
+	CHAR_P = sizeof(char *),
+	CONST_CHAR_P = sizeof(const char *),
+	CHAR_P_CONST = sizeof(char * const),
+	UNSIGNED_CHAR_P = sizeof(unsigned char *),
+	LONG = sizeof(long),
+	UNSIGNED_LONG = sizeof(unsigned long),
+	VOID, //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	VOID_P = sizeof(void *),
+	CONST_VOID_P = sizeof(const void *),
+	MODE_T = sizeof(mode_t),
+	TIME_T = sizeof(time_t),
+	TIME_T_P = sizeof(time_t *),
+	CONST_TIME_T_P = sizeof(const time_t *),
+	DEV_T = sizeof(dev_t),
+	UID_T = sizeof(uid_t),
+	GID_T = sizeof(gid_t),
+	OFF_T = sizeof(off_t),
+	OFF_T_P = sizeof(off_t *),
+	ENUM_PTRACE_REQUEST = sizeof(int), ////////////////////////////////////////////////////////////
+	CONST_STRUCT_UTIMBUF_P = sizeof(const struct utimebuf *),
+	CLOCK_T = sizeof(clock_t),
+	STRUCT_TMS_P = sizeof(struct tms *),
+	//SIGHANDLER_T = sizeof(sighandler_t),
+	VARGS, /////////////////////////////////////////////////
+	STRUCT_STAT_P = sizeof(struct stat *),
+	STRUCT_POLLFD_P = sizeof(struct pollfd *),
+	NFDS_T = sizeof(nfds_t),
+	CONST_STRUCT_SIGACTION_P = sizeof(const struct sigaction *),
+	STRUCT_SIGACTION_P = sizeof(struct sigaction *),
+	CONST_SIGSET_T_P = sizeof(const sigset_t *),
+	SIGSET_T_P = sizeof(sigset_t *),
+	CONST_STRUCT_IOVEC_P = sizeof(const struct iovec *),
 	FD_SET_P,
 	STRUCT_TIMEVAL_P,
 	KEY_T,

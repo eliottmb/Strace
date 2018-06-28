@@ -17,12 +17,22 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <signal.h>
+#include <sys/user.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <elf.h>
+#include <poll.h>
+#include <sys/times.h>
 
 int forked(int ac, char **av);
 int my_trace(pid_t pid);
 int syswait(pid_t pid);
+void	printSyscall(int call);
+void	printParam(int param);
+void	printRet(int ret);
 
-char *getstr(pid_t pid, unsigned long addr);
 //void	printit(pid_t pid, int call, int ret)
 
 #endif      /* __STRACE_H__ */

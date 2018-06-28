@@ -7,8 +7,19 @@
 
 #include "output.h"
 
-void	printit(pid_t pid, int call, int ret)
+#define VALUE (4096)
+
+void	printSyscall(int call)
 {
-	if (call > 0 && call <= 313)
-		printf("call (%s) = %d\n", g_syscalls[call].name);
+	printf("call %s", g_syscalls[call].name);
+}
+
+void	printParam(int param)
+{
+	printf("(%d) ", param);
+}
+
+void	printRet(int ret)
+{
+	printf("%d\n", ret);
 }
