@@ -9,7 +9,7 @@
 
 extern pid_t	g_tracee_pid;
 
-int	launch_child(char **cmd)
+int	createChild(char **cmd)
 {
 	if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) == -1)
 	{
@@ -21,7 +21,7 @@ int	launch_child(char **cmd)
 	return (FAILURE);
 }
 
-static int	trace_by_pid(pid_t pid)
+static int	tracePid(pid_t pid)
 {
 	if (ptrace(PTRACE_ATTACH, pid, NULL, NULL) == -1)
 	{
@@ -29,12 +29,12 @@ static int	trace_by_pid(pid_t pid)
 		return (FAILURE);
 	}
 	g_tracee_pid = pid;
-	if (trace_process(pid) == FAILURE)
+	if (trace(pid) == FAILURE)
 		return (FAILURE);
 	return (SUCCESS);
 }
 
-static int	trace_by_cmd(char **cmd)
+static int	traceFork(char **cmd)
 {
 	pid_t	child;
 
@@ -45,13 +45,13 @@ static int	trace_by_cmd(char **cmd)
 	}
 	if (child == 0)
 	{
-		if (launch_child(cmd) == FAILURE)
+		if (createChild(cmd) == FAILURE)
 			exit(EXIT_FAILURE);
 	}
 	else
 	{
 		g_tracee_pid = child;
-		if (trace_process(child) == FAILURE)
+		if (trace(child) == FAILURE)
 			return (FAILURE);
 	}
 	return (SUCCESS);
@@ -93,9 +93,9 @@ int	main(int argc, char **argv)
 		return (EXIT_FAILURE);
 	}
 	if (ret_value == SUCCESS)
-		ret_value = trace_by_cmd(cmd);
+		ret_value = traceFork(cmd);
 	else
-		ret_value = trace_by_pid(ret_value);
+		ret_value = tracePid(ret_value);
 	if (ret_value == FAILURE)
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);

@@ -53,50 +53,45 @@ typedef struct	s_types
   void		(*print_fct)(unsigned long long int register_value);
 }		t_types;
 
-typedef enum
-  {
-    false = 0,
-    true = 1
-  }		t_bool;
-
 /*
-** handle_exit.c
+** main.c
 */
+
 void	handle_exit(int *status);
 
 /*
 ** launch_child.c
 */
-int	launch_child(char **cmd);
+int	createChild(char **cmd);
 
 /*
 ** print_syscalls.c
 */
-void	print_args(int syscall_number, struct user_regs_struct *registers);
-void	print_return_value(int nb_syscall,
+void	printAllArgs(int syscall_number, struct user_regs_struct *registers);
+void	printRet(int nb_syscall,
 			   char *type, struct user_regs_struct *registers);
-int	print_syscall(int syscall_number, struct user_regs_struct *registers);
+int	printCall(int syscall_number, struct user_regs_struct *registers);
 
 /*
 ** print_types.c
 */
-void	print_int(unsigned long long int register_value);
-void	print_long(unsigned long long int register_value);
-void	print_uint(unsigned long long int register_value);
-void	print_ulong(unsigned long long int register_value);
-void	print_pointer(unsigned long long int register_value);
+void	printInt(unsigned long long int register_value);
+void	printLong(unsigned long long int register_value);
+void	printUint(unsigned long long int register_value);
+void	printUlong(unsigned long long int register_value);
+void	printPointer(unsigned long long int register_value);
 
 /*
 ** print_types2.c
 */
-void	print_string(unsigned long long int register_value);
-void	print_string_tab(unsigned long long int register_value);
-void	print_unimplemented(unsigned long long int register_value);
-void	print_nothing(unsigned long long int register_value);
+void	printString(unsigned long long int register_value);
+void	printStringTab(unsigned long long int register_value);
+void	printUnimplemented(unsigned long long int register_value);
+void	printNothing(unsigned long long int register_value);
 
 /*
 ** trace.c
 */
-int	trace_process(pid_t pid);
+int	trace(pid_t pid);
 
 #endif /* !STRACE_H_ */

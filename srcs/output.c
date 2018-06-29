@@ -10,77 +10,73 @@
 extern t_prototype	g_syscalls[];
 extern t_types		g_types[];
 
-unsigned long long int	arg_nb_to_register(int arg_nb, struct user_regs_struct *registers)
+unsigned long long int	getGoodRegister(int nb_args, struct user_regs_struct *regs)
 {
-	if (arg_nb == -1)
-		return (registers->rax);
-	if (arg_nb == 0)
-		return (registers->rdi);
-	if (arg_nb == 1)
-		return (registers->rsi);
-	if (arg_nb == 2)
-		return (registers->rdx);
-	if (arg_nb == 3)
-		return (registers->rcx);
-	if (arg_nb == 4)
-		return (registers->r8);
-	if (arg_nb == 5)
-		return (registers->r9);
+	if (nb_args == -1)
+		return (regs->rax);
+	if (nb_args == 0)
+		return (regs->rdi);
+	if (nb_args == 1)
+		return (regs->rsi);
+	if (nb_args == 2)
+		return (regs->rdx);
+	if (nb_args == 3)
+		return (regs->rcx);
+	if (nb_args == 4)
+		return (regs->r8);
+	if (nb_args == 5)
+		return (regs->r9);
 	return (0);
 }
 
-void	print_arg(char *type, int arg_nb, struct user_regs_struct *registers)
+void	printArg(char *type, int nb_args, struct user_regs_struct *regs)
 {
 	int	i;
 	
 	i = 0;
 	if (type[strlen(type) - 1] == '*' && strcmp(type, "char *") && strcmp(type, "char **"))
-		print_pointer(arg_nb_to_register(arg_nb, registers));
+		printPointer(getGoodRegister(nb_args, regs));
 	else
 	{
 		while (g_types[i + 1].name != NULL && strcmp(g_types[i].name, type))
 			++i;
-		g_types[i].print_fct(arg_nb_to_register(arg_nb, registers));
+		g_types[i].print_fct(getGoodRegister(nb_args, regs));
 	}
 }
 
-void	print_return_value(int nb_syscall, char *type, struct user_regs_struct *registers)
+void	printRet(int nb_syscall, char *type, struct user_regs_struct *regs)
 {
-	(void)fprintf(stderr, "\033[0m) = \033[31m");
+	(void)fprintf(stderr, ") = ");
 	if (nb_syscall != 60 && nb_syscall != 231)
 	{
-		if ((long long)registers->rax < 0)
-			fprintf(stderr, "-1 (%s)", strerror(-registers->rax));
+		if ((long long)regs->rax < 0)
+			fprintf(stderr, "-1 (%s)", strerror(-regs->rax));
 		else
-			print_arg(type, -1, registers);
+			printArg(type, -1, regs);
 	}
 	else
 		fprintf(stderr, "?");
 	(void)fprintf(stderr, "\033[0m\n");
 }
 
-void	print_args(int nb_syscall, struct user_regs_struct *registers)
+void	printAllArgs(int nb_syscall, struct user_regs_struct *regs)
 {
-	int	i;
-	
-	i = 0;
-	while (i < g_syscalls[nb_syscall].nb_params - 1)
+	int	i = 0;
+
+	for (int i = 0; i < g_syscalls[nb_syscall].nb_params - 1; i++)
 	{
-		(void)fprintf(stderr, "\033[33m");
-		print_arg(g_syscalls[nb_syscall].params[i], i, registers);
-		(void)fprintf(stderr, "\033[0m, ");
-		++i;
+		printArg(g_syscalls[nb_syscall].params[i], i, regs);
+		fprintf(stderr, ", ");
 	}
-	(void)fprintf(stderr, "\033[33m");
-	print_arg(g_syscalls[nb_syscall].params[i], i, registers);
+	printArg(g_syscalls[nb_syscall].params[i], i, regs);
 }
 
-int	print_syscall(int nb_syscall, struct user_regs_struct *registers)
+int	printCall(int nb_syscall, struct user_regs_struct *regs)
 {
-	(void)registers;
-	(void)fprintf(stderr, "\033[32m");
-	(void)fprintf(stderr, "%s", g_syscalls[nb_syscall].name);
-	(void)fprintf(stderr, "\033[0m(");
-	print_args(nb_syscall, registers);
+	(void *)regs;
+
+	fprintf(stderr, "%s", g_syscalls[nb_syscall].name);
+	fprintf(stderr, "(");
+	printAllArgs(nb_syscall, regs);
 	return (SUCCESS);
 }

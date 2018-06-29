@@ -28,26 +28,25 @@ static int	step_instruction(pid_t pid, int *status)
 
 static int		analyse_syscall(struct user_regs_struct *registers, pid_t pid, int *status)
 {
-  unsigned long long	syscall_number;
+  unsigned long long	callNumber;
 
-  syscall_number = registers->rax;
-  if (syscall_number > MAX_SYSCALL || print_syscall(syscall_number, registers) == FAILURE)
+  callNumber = registers->rax;
+  if (callNumber > MAX_SYSCALL || printCall(callNumber, registers) == FAILURE)
     return (FAILURE);
-  if (syscall_number != 60 && syscall_number != 231)
+  if (callNumber != 60 && callNumber != 231)
     {
-      if (syscall_number == 1)
-	fprintf(stderr, "\033[0m\n");
+      if (callNumber == 1)
+	fprintf(stderr, "\n");
       if (step_instruction(pid, status) == FAILURE
 	  || ptrace(PTRACE_GETREGS, pid, NULL, registers) == -1)
 	return (FAILURE);
     }
-  (void)print_return_value(syscall_number,
-			   g_syscalls[syscall_number].ret_type, registers);
-  if (syscall_number == 60 || syscall_number == 231)
+  printRet(callNumber, g_syscalls[callNumber].ret_type, registers);
+  if (callNumber == 60 || callNumber == 231)
     {
-      (void)printf(" was returned by tracee");
-      (void)system("echo -n $?");
-      (void)printf("\n");
+	printf(" was returned by tracee");
+	system("echo -n $?");
+	printf("\n");
       exit(EXIT_SUCCESS);
     }
   return (SUCCESS);
@@ -58,8 +57,7 @@ static int		analyse_registers(struct user_regs_struct *registers,
 {
   long			rip_pointed_data;
 
-  if ((rip_pointed_data = ptrace(PTRACE_PEEKDATA, pid,
-				 registers->rip, NULL)) == -1)
+  if ((rip_pointed_data = ptrace(PTRACE_PEEKDATA, pid, registers->rip, NULL)) == -1)
     return (FAILURE);
   rip_pointed_data &= 0xffff;
   if (rip_pointed_data == SYSCALL_OPCODE)
@@ -70,7 +68,7 @@ static int		analyse_registers(struct user_regs_struct *registers,
   return (SUCCESS);
 }
 
-int				trace_process(pid_t pid)
+int				trace(pid_t pid)
 {
   struct user_regs_struct	registers;
   int				status;

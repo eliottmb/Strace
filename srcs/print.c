@@ -9,7 +9,7 @@
 
 extern pid_t	g_tracee_pid;
 
-static void	print_char(char c)
+static void	printChar(char c)
 {
 	if (((c > 32 && c < 127) || c == ' ') && c != '\0')
 		(void)fprintf(stderr, "%c", c);
@@ -17,7 +17,7 @@ static void	print_char(char c)
 		(void)fprintf(stderr, "\\%o", c);
 }
 
-void	print_string(unsigned long long int register_value)
+void	printString(unsigned long long int regsVal)
 {
 	int	i;
 	long	c;
@@ -25,22 +25,22 @@ void	print_string(unsigned long long int register_value)
 	(void)fprintf(stderr, "\"");
 	i = 0;
 	c = -1;
-	while ((char)c != '\0' && i < 42)
+
+	for (int i = 0; ((char)c != '\0' && i < 42); i = i + 1)
 	{
-		if ((c = ptrace(PTRACE_PEEKDATA, g_tracee_pid, register_value, NULL)) == -1)
+		if ((c = ptrace(PTRACE_PEEKDATA, g_tracee_pid, regsVal, NULL)) == -1)
 		{
 			fprintf(stderr, "\033[36mptrace PTRACE_PEEK_DATA error: ");
 			fprintf(stderr, "%s\033[33m\"", strerror(errno));
 			return ;
 		}
-		print_char(c);
-		++register_value;
-		++i;
+		printChar(c);
+		++regsVal;
 	}
 	(void)fprintf(stderr, "\"");
 }
 
-void			print_string_tab(unsigned long long int register_value)
+void			printStringTab(unsigned long long int regsVal)
 {
 	unsigned long long	str;
 	int			i;
@@ -50,15 +50,15 @@ void			print_string_tab(unsigned long long int register_value)
 	str = (unsigned long long)-1;
 	while ((void*)str != NULL && i < 6)
 	{
-		if ((str = ptrace(PTRACE_PEEKDATA, g_tracee_pid, register_value, NULL)) == (unsigned long long)-1)
+		if ((str = ptrace(PTRACE_PEEKDATA, g_tracee_pid, regsVal, NULL)) == (unsigned long long)-1)
 		{
 			fprintf(stderr, "\033[36mptrace PTRACE_PEEK_DATA error: ");
 			fprintf(stderr, "%s\033[33m]", strerror(errno));
 			return ;
 		}
 		if (str)
-		print_string(str);
-		register_value += sizeof(char*);
+		printString(str);
+		regsVal += sizeof(char*);
 		++i;
 	}
 	(void)fprintf(stderr, "]");
@@ -66,13 +66,13 @@ void			print_string_tab(unsigned long long int register_value)
 	(void)fprintf(stderr, " ... ");
 }
 
-void	print_unimplemented(unsigned long long int register_value)
+void	printUnimplemented(unsigned long long int regsVal)
 {
-	(void)register_value;
+	(void)regsVal;
 	(void)fprintf(stderr, "unimplemented");
 }
 
-void	print_nothing(unsigned long long int register_value)
+void	printNothing(unsigned long long int regsVal)
 {
-	(void)register_value;
+	(void)regsVal;
 }
