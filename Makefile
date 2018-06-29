@@ -5,7 +5,7 @@
 ## Syscall tracer
 ##
 
-CC	= gcc -g3 -I./include/
+CC	= gcc -I./include/
 
 RM	= rm -f
 

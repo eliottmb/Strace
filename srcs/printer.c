@@ -7,30 +7,30 @@
 
 #include "strace.h"
 
-void	printInt(unsigned long long int register_value)
+void	printInt(unsigned long long int regs)
 {
-	(void)fprintf(stderr, "%d", (int)register_value);
+	(void)fprintf(stderr, "%d", (int)regs);
 }
 
-void	printLong(unsigned long long int register_value)
+void	printLong(unsigned long long int regs)
 {
-	(void)fprintf(stderr, "%ld", (long)register_value);
+	(void)fprintf(stderr, "%ld", (long)regs);
 }
 
-void	printUint(unsigned long long int register_value)
+void	printUint(unsigned long long int regs)
 {
-	(void)fprintf(stderr, "%u", (unsigned int)register_value);
+	(void)fprintf(stderr, "%u", (unsigned int)regs);
 }
 
-void	printUlong(unsigned long long int register_value)
+void	printUlong(unsigned long long int regs)
 {
-	(void)fprintf(stderr, "%lu", (unsigned long)register_value);
+	(void)fprintf(stderr, "%lu", (unsigned long)regs);
 }
 
-void	printPointer(unsigned long long int register_value)
+void	printPointer(unsigned long long int regs)
 {
-	if (register_value == 0)
+	if (regs == 0)
 		fprintf(stderr, "NULL");
 	else
-		(void)fprintf(stderr, "%p", (void*)register_value);
+		(void)fprintf(stderr, "%p", (void*)regs);
 }

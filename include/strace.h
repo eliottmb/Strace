@@ -25,17 +25,6 @@
 # include <unistd.h>
 
 /*
-** DEFINES
-*/
-
-# define FAILURE 0
-# define SUCCESS 1
-# define EXIT 2
-
-# define MAX_SYSCALL 313
-# define SYSCALL_OPCODE 0x050f
-
-/*
 ** STRUCTS
 */
 
@@ -50,7 +39,7 @@ typedef struct	s_prototype
 typedef struct	s_types
 {
   char		*name;
-  void		(*print_fct)(unsigned long long int register_value);
+  void		(*printFct)(unsigned long long int register_value);
 }		t_types;
 
 /*
@@ -86,7 +75,7 @@ void	printPointer(unsigned long long int register_value);
 */
 void	printString(unsigned long long int register_value);
 void	printStringTab(unsigned long long int register_value);
-void	printUnimplemented(unsigned long long int register_value);
+void	printNope(unsigned long long int register_value);
 void	printNothing(unsigned long long int register_value);
 
 /*

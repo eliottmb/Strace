@@ -10,24 +10,45 @@
 extern t_prototype	g_syscalls[];
 extern t_types		g_types[];
 
-unsigned long long int	getGoodRegister(int nb_args, struct user_regs_struct *regs)
+
+unsigned long long lowRegs(int nb_args, struct user_regs_struct *regs)
 {
 	if (nb_args == -1)
 		return (regs->rax);
-	if (nb_args == 0)
+	else if (nb_args == 0)
 		return (regs->rdi);
-	if (nb_args == 1)
+	else
 		return (regs->rsi);
+}
+unsigned long long mediumRegs(int nb_args, struct user_regs_struct *regs)
+{
 	if (nb_args == 2)
 		return (regs->rdx);
 	if (nb_args == 3)
 		return (regs->rcx);
 	if (nb_args == 4)
 		return (regs->r8);
+	return (0);
+	
+}
+unsigned long long highRegs(int nb_args, struct user_regs_struct *regs)
+{
 	if (nb_args == 5)
 		return (regs->r9);
 	return (0);
 }
+
+unsigned long long int	getGoodRegister(int nb_args, struct user_regs_struct *regs)
+{
+	if (nb_args >= -1 && nb_args <= 1)
+		return (lowRegs(nb_args, regs));
+	else if (nb_args >= 2 && nb_args <= 4)
+		return (mediumRegs(nb_args, regs));
+	else
+		return (highRegs(nb_args, regs));
+	return (0);
+}
+
 
 void	printArg(char *type, int nb_args, struct user_regs_struct *regs)
 {
@@ -40,13 +61,13 @@ void	printArg(char *type, int nb_args, struct user_regs_struct *regs)
 	{
 		while (g_types[i + 1].name != NULL && strcmp(g_types[i].name, type))
 			++i;
-		g_types[i].print_fct(getGoodRegister(nb_args, regs));
+		g_types[i].printFct(getGoodRegister(nb_args, regs));
 	}
 }
 
 void	printRet(int nb_syscall, char *type, struct user_regs_struct *regs)
 {
-	(void)fprintf(stderr, ") = ");
+	fprintf(stderr, ") = ");
 	if (nb_syscall != 60 && nb_syscall != 231)
 	{
 		if ((long long)regs->rax < 0)
@@ -56,7 +77,7 @@ void	printRet(int nb_syscall, char *type, struct user_regs_struct *regs)
 	}
 	else
 		fprintf(stderr, "?");
-	(void)fprintf(stderr, "\033[0m\n");
+	(void)fprintf(stderr, "\n");
 }
 
 void	printAllArgs(int nb_syscall, struct user_regs_struct *regs)
@@ -75,8 +96,7 @@ int	printCall(int nb_syscall, struct user_regs_struct *regs)
 {
 	(void *)regs;
 
-	fprintf(stderr, "%s", g_syscalls[nb_syscall].name);
-	fprintf(stderr, "(");
+	fprintf(stderr, "%s(", g_syscalls[nb_syscall].name);
 	printAllArgs(nb_syscall, regs);
-	return (SUCCESS);
+	return (1);
 }

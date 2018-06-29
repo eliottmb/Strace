@@ -39,7 +39,7 @@ const t_types	g_types[] =  {
 	{"mqd_t", &printInt},
 	{"idtype_t", &printUlong},
 	{"key_serial_t", &printUlong},
-	{"unimplemented", &printUnimplemented},
+	{"unimplemented", &printNope},
 	{"default", &printPointer},
 	{NULL, NULL}
 };

@@ -2,6 +2,13 @@
 	"files.associations": {
 		"typeinfo": "c",
 		"ptrace.h": "c",
-		"cstdlib": "c"
+		"cstdlib": "c",
+		"array": "c",
+		"chrono": "c",
+		"functional": "c",
+		"ratio": "c",
+		"type_traits": "c",
+		"tuple": "c",
+		"utility": "c"
 	}
 }
