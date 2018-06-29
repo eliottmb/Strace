@@ -1,76 +1,95 @@
 /*
 ** EPITECH PROJECT, 2018
-** strargce
+** strace
 ** File description:
 ** Syscall tracer
 */
 
 #include "strace.h"
-#include <sys/ptrace.h>
 
-#define VALUE (4096)
+pid_t	g_tracee_pid = -1;
 
-int	syswait(pid_t pid)
+extern t_prototype	g_syscalls[];
+
+static int	step_instruction(pid_t pid, int *status)
 {
-	int 	stat;
-	int 	syscall;
-	int	ret;
-	struct user_regs_struct regs;
-				
-	int	params, params2;
-	while(1)
-	{
-		ptrace(PTRACE_SINGLESTEP, pid, 0, 0);
-		waitpid(pid, &stat, 0);
-		if (WIFSTOPPED(stat) && WSTOPSIG(stat) == SIGTRAP)
-		{
-			syscall = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * ORIG_RAX), NULL;
-			ret = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * RAX, NULL);
-			params = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * RBX, NULL);
-			if (syscall > 0 && syscall < 15)
-			{
-				printSyscall(syscall);
-				printParam(params);
-				printRet(ret);
-			}
-		}
-		if (WIFEXITED(stat))
-			return (1);
-	}
-	return (0);
+  if (ptrace(PTRACE_SINGLESTEP, pid, NULL, NULL) == -1)
+    {
+      warn("trace PTRACE_SINGLESTEP error");
+      return (FAILURE);
+    }
+  if (waitpid(pid, status, 0) == -1)
+    {
+      warn("wait error");
+      return (FAILURE);
+    }
+  return (SUCCESS);
 }
 
-int	forked(int argc, char **argv)
+static int		analyse_syscall(struct user_regs_struct *registers, pid_t pid, int *status)
 {
-	char *ag[argc + 1];
+  unsigned long long	syscall_number;
 
-	memcpy(ag, argv, argc * sizeof(char * ));
-	ag[argc] = NULL;
-	ptrace(PTRACE_TRACEME);
-	kill(getpid(), SIGSTOP);
-	return (execvp(ag[0], ag));
+  syscall_number = registers->rax;
+  if (syscall_number > MAX_SYSCALL || print_syscall(syscall_number, registers) == FAILURE)
+    return (FAILURE);
+  if (syscall_number != 60 && syscall_number != 231)
+    {
+      if (syscall_number == 1)
+	fprintf(stderr, "\033[0m\n");
+      if (step_instruction(pid, status) == FAILURE
+	  || ptrace(PTRACE_GETREGS, pid, NULL, registers) == -1)
+	return (FAILURE);
+    }
+  (void)print_return_value(syscall_number,
+			   g_syscalls[syscall_number].ret_type, registers);
+  if (syscall_number == 60 || syscall_number == 231)
+    {
+      (void)printf(" was returned by tracee");
+      (void)system("echo -n $?");
+      (void)printf("\n");
+      exit(EXIT_SUCCESS);
+    }
+  return (SUCCESS);
 }
 
-int	my_trace(pid_t pid)
+static int		analyse_registers(struct user_regs_struct *registers,
+					  pid_t pid, int *status)
 {
-	int	status;
-	int	syscall;
-	int	ret;
-	int	params;
-	
-	waitpid(pid, &status, 0);
-	ptrace(PTRACE_SETOPTIONS, pid, 0, PTRACE_O_TRACESYSGOOD);
-	while (1)
+  long			rip_pointed_data;
+
+  if ((rip_pointed_data = ptrace(PTRACE_PEEKDATA, pid,
+				 registers->rip, NULL)) == -1)
+    return (FAILURE);
+  rip_pointed_data &= 0xffff;
+  if (rip_pointed_data == SYSCALL_OPCODE)
+    {
+      if (analyse_syscall(registers, pid, status) == FAILURE)
+	return (FAILURE);
+    }
+  return (SUCCESS);
+}
+
+int				trace_process(pid_t pid)
+{
+  struct user_regs_struct	registers;
+  int				status;
+
+  if (waitpid(pid, &status, 0) == -1)
+    {
+      warn("wait error");
+      return (FAILURE);
+    }
+  while (42)
+    {
+      if (ptrace(PTRACE_GETREGS, pid, NULL, &registers) == -1)
 	{
-		if (syswait(pid) != 0)
-			break;
-		syscall = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * ORIG_RAX);
-		params = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * RBX, NULL);
-		ret = ptrace(PTRACE_PEEKUSER, pid, sizeof(long) * RAX);
-		printSyscall(syscall);
-		printParam(params);
-		printRet(ret);
+	  warn("ptrace PTRACE_GETREGS error");
+	  return (FAILURE);
 	}
-	puts("----");
-	return (0);
+      if (analyse_registers(&registers, pid, &status) == FAILURE)
+	return (FAILURE);
+      if (step_instruction(pid, &status) == FAILURE)
+	return (FAILURE);
+    }
 }

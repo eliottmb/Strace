@@ -8,31 +8,95 @@
 #ifndef		__STRACE_H__
 # define	__STRACE_H__
 
-#include <sys/ptrace.h>
-#include <sys/reg.h>
-#include <sys/wait.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
-#include <string.h>
-#include <signal.h>
-#include <sys/user.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <elf.h>
-#include <poll.h>
-#include <sys/times.h>
+/*
+** INCLUDES
+*/
 
-int forked(int ac, char **av);
-int my_trace(pid_t pid);
-int syswait(pid_t pid);
-void	printSyscall(int call);
-void	printParam(int param);
-void	printRet(int ret);
+# include <err.h>
+# include <errno.h>
+# include <signal.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include <sys/ptrace.h>
+# include <sys/types.h>
+# include <sys/user.h>
+# include <sys/wait.h>
+# include <unistd.h>
 
-//void	printit(pid_t pid, int call, int ret)
+/*
+** DEFINES
+*/
 
-#endif      /* __STRACE_H__ */
+# define FAILURE 0
+# define SUCCESS 1
+# define EXIT 2
+
+# define MAX_SYSCALL 313
+# define SYSCALL_OPCODE 0x050f
+
+/*
+** STRUCTS
+*/
+
+typedef struct	s_prototype
+{
+  char		*name;
+  int		nb_params;
+  char		*params[6];
+  char		*ret_type;
+}		t_prototype;
+
+typedef struct	s_types
+{
+  char		*name;
+  void		(*print_fct)(unsigned long long int register_value);
+}		t_types;
+
+typedef enum
+  {
+    false = 0,
+    true = 1
+  }		t_bool;
+
+/*
+** handle_exit.c
+*/
+void	handle_exit(int *status);
+
+/*
+** launch_child.c
+*/
+int	launch_child(char **cmd);
+
+/*
+** print_syscalls.c
+*/
+void	print_args(int syscall_number, struct user_regs_struct *registers);
+void	print_return_value(int nb_syscall,
+			   char *type, struct user_regs_struct *registers);
+int	print_syscall(int syscall_number, struct user_regs_struct *registers);
+
+/*
+** print_types.c
+*/
+void	print_int(unsigned long long int register_value);
+void	print_long(unsigned long long int register_value);
+void	print_uint(unsigned long long int register_value);
+void	print_ulong(unsigned long long int register_value);
+void	print_pointer(unsigned long long int register_value);
+
+/*
+** print_types2.c
+*/
+void	print_string(unsigned long long int register_value);
+void	print_string_tab(unsigned long long int register_value);
+void	print_unimplemented(unsigned long long int register_value);
+void	print_nothing(unsigned long long int register_value);
+
+/*
+** trace.c
+*/
+int	trace_process(pid_t pid);
+
+#endif /* !STRACE_H_ */

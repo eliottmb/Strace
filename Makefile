@@ -13,9 +13,12 @@ CFLAGS	+= -W -Wall -Wextra
 
 NAME		= strace
 
-SRCS		= srcs/main.c	\
-		  srcs/strace.c	\
-		  srcs/output.c
+SRCS		= srcs/main.c		\
+		  srcs/strace.c		\
+		  srcs/output.c		\
+		  srcs/print.c		\
+		  srcs/printer.c	\
+		  srcs/syscalls.c
 
 OBJS		= $(SRCS:.c=.o)
 

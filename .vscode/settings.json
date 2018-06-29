@@ -1,5 +1,7 @@
 {
 	"files.associations": {
-		"typeinfo": "c"
+		"typeinfo": "c",
+		"ptrace.h": "c",
+		"cstdlib": "c"
 	}
 }
