@@ -11,13 +11,13 @@ pid_t	g_pid = -1;
 
 extern t_prototype	g_syscalls[];
 
-void			quitErr(char *str)
+void		quitErr(char *str)
 {
 	fprintf(stderr, "s\n");
 	exit(84);
 }
 
-static int		step_instruction(pid_t pid, int *status)
+int		step_instruction(pid_t pid, int *status)
 {
   	if (ptrace(PTRACE_SINGLESTEP, pid, NULL, NULL) == -1)
 	      	quitErr("trace PTRACE_SINGLESTEP error");
@@ -26,7 +26,7 @@ static int		step_instruction(pid_t pid, int *status)
       	return (1);
 }
 
-static int		analyse_syscall(struct user_regs_struct *regs, pid_t pid, int *status)
+int		analyse_syscall(struct user_regs_struct *regs, pid_t pid, int *status)
 {
 	unsigned long long	callNumber;
 
@@ -46,7 +46,7 @@ static int		analyse_syscall(struct user_regs_struct *regs, pid_t pid, int *statu
 	return (1);
 }
 
-static int		analyse_regs(struct user_regs_struct *regs, pid_t pid, int *status)
+int		analyse_regs(struct user_regs_struct *regs, pid_t pid, int *status)
 {
 	long			rip_pointed_data;
 	
@@ -61,7 +61,7 @@ static int		analyse_regs(struct user_regs_struct *regs, pid_t pid, int *status)
 	return (1);
 }
 
-int			trace(pid_t pid)
+int		trace(pid_t pid)
 {
 	struct user_regs_struct		regs;
 	int				status;

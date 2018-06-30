@@ -88,9 +88,9 @@ void			printPointer(unsigned long long int regs);
 */
 
 void			quitErr(char *str);
-static int		step_instruction(pid_t pid, int *status);
-static int		analyse_syscall(struct user_regs_struct *regs, pid_t pid, int *status);
-static int		analyse_regs(struct user_regs_struct *regs, pid_t pid, int *status);
+int			step_instruction(pid_t pid, int *status);
+int			analyse_syscall(struct user_regs_struct *regs, pid_t pid, int *status);
+int			analyse_regs(struct user_regs_struct *regs, pid_t pid, int *status);
 int			trace(pid_t pid);
 
 #endif /* __STRACE_H__ */
