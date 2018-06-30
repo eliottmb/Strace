@@ -11,33 +11,6 @@ extern t_prototype	g_syscalls[];
 extern t_types		g_types[];
 
 
-unsigned long long lowRegs(int nb_args, struct user_regs_struct *regs)
-{
-	if (nb_args == -1)
-		return (regs->rax);
-	else if (nb_args == 0)
-		return (regs->rdi);
-	else
-		return (regs->rsi);
-}
-unsigned long long mediumRegs(int nb_args, struct user_regs_struct *regs)
-{
-	if (nb_args == 2)
-		return (regs->rdx);
-	if (nb_args == 3)
-		return (regs->rcx);
-	if (nb_args == 4)
-		return (regs->r8);
-	return (0);
-	
-}
-unsigned long long highRegs(int nb_args, struct user_regs_struct *regs)
-{
-	if (nb_args == 5)
-		return (regs->r9);
-	return (0);
-}
-
 unsigned long long int	getGoodRegister(int nb_args, struct user_regs_struct *regs)
 {
 	if (nb_args >= -1 && nb_args <= 1)
@@ -50,22 +23,31 @@ unsigned long long int	getGoodRegister(int nb_args, struct user_regs_struct *reg
 }
 
 
-void	printArg(char *type, int nb_args, struct user_regs_struct *regs)
+void			printArg(char *type, int nb_args, struct user_regs_struct *regs)
 {
-	int	i;
+	int	i = 0;
 	
-	i = 0;
 	if (type[strlen(type) - 1] == '*' && strcmp(type, "char *") && strcmp(type, "char **"))
+	{
+		if (nb_args != -1)
+			fprintf(stderr, "\"");
 		printPointer(getGoodRegister(nb_args, regs));
+		if (nb_args != -1)
+			fprintf(stderr, "\"");
+	}
 	else
 	{
 		while (g_types[i + 1].name != NULL && strcmp(g_types[i].name, type))
 			++i;
+		if (nb_args != -1)
+			fprintf(stderr, "\"");
 		g_types[i].printFct(getGoodRegister(nb_args, regs));
+		if (nb_args != -1)
+			fprintf(stderr, "\"");
 	}
 }
 
-void	printRet(int nb_syscall, char *type, struct user_regs_struct *regs)
+void			printRet(int nb_syscall, char *type, struct user_regs_struct *regs)
 {
 	fprintf(stderr, ") = ");
 	if (nb_syscall != 60 && nb_syscall != 231)
@@ -80,7 +62,7 @@ void	printRet(int nb_syscall, char *type, struct user_regs_struct *regs)
 	(void)fprintf(stderr, "\n");
 }
 
-void	printAllArgs(int nb_syscall, struct user_regs_struct *regs)
+void			printAllArgs(int nb_syscall, struct user_regs_struct *regs)
 {
 	int	i = 0;
 
@@ -92,7 +74,7 @@ void	printAllArgs(int nb_syscall, struct user_regs_struct *regs)
 	printArg(g_syscalls[nb_syscall].params[i], i, regs);
 }
 
-int	printCall(int nb_syscall, struct user_regs_struct *regs)
+int			printCall(int nb_syscall, struct user_regs_struct *regs)
 {
 	(void *)regs;
 

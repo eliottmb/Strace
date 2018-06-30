@@ -9,34 +9,46 @@
 
 extern pid_t	g_pid;
 
-static void	printChar(char c)
+static void		printChar(char c)
 {
 	if (((c > 32 && c < 127) || c == ' ') && c != '\0')
-		fprintf(stderr, "%c", c);
+	{
+		if (sFlag == 0)
+			fprintf(stderr, "%c", c);
+		else 
+			fprintf(stderr, "%p", (char *)c);
+	}
 	else if (c != '\n' && c != '\0')
 		fprintf(stderr, "\\%o", c);
 }
 
-void	printString(unsigned long long int regsVal)
+void			printStringPtr(unsigned long long int regsVal)
+{
+	long	c = -1;
+
+	c = ptrace(PTRACE_PEEKDATA, g_pid, regsVal, NULL);
+	printPointer(c);
+}
+
+void			printString(unsigned long long int regsVal)
 {
 	int	i;
 	long	c;
 	
-	fprintf(stderr, "\"");
 	i = 0;
 	c = -1;
-
-	for (int i = 0; ((char)c != '\0' && i < 42); i = i + 1)
+	if (sFlag == 1)
+		printStringPtr(regsVal);
+	else
 	{
-		if ((c = ptrace(PTRACE_PEEKDATA, g_pid, regsVal, NULL)) == -1)
+		for (int i = 0; ((char)c != '\0' && i < 42); i = i + 1)
 		{
-			fprintf(stderr, "ptrace PTRACE_PEEK_DATA error");
-			return ;
+			if ((c = ptrace(PTRACE_PEEKDATA, g_pid, regsVal, NULL)) == -1)
+				quitErr("ptrace PTRACE_PEEK_DATA error\n");
+			printChar(c);
+			++regsVal;
 		}
-		printChar(c);
-		++regsVal;
 	}
-	fprintf(stderr, "\"");
 }
 
 void			printStringTab(unsigned long long int regsVal)
@@ -63,12 +75,7 @@ void			printStringTab(unsigned long long int regsVal)
 	fprintf(stderr, " ... ");
 }
 
-void	printNope(unsigned long long int regsVal)
+void			printNope(unsigned long long int regsVal)
 {
 	fprintf(stderr, "unimplemented");
-}
-
-void	printNothing(unsigned long long int regsVal)
-{
-	return;
 }

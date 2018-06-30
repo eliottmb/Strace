@@ -7,11 +7,7 @@
 
 #include "strace.h"
 
-void	quitErr(char *str)
-{
-	printf("s\n");
-	exit(84);
-}
+int	sFlag = 0;
 
 extern pid_t	g_pid;
 
@@ -61,16 +57,22 @@ static int	get_args(int argc, char **av, char ***cmd)
 {
 	if (argc < 2)
 		return (0);
+	if (av[1][0] == '-' && av[1][1] == 's')
+		sFlag = 1;
+	else
+		sFlag = 0;
 	if (!strcmp(av[1], "-p") && argc > 2)
 		return (atoi(av[2]));
-	*cmd = av + 1;
-	return (1);	}
+	*cmd = av + 1 + sFlag;
+	return (1);
+}
 
 int	main(int argc, char **argv)
 {
 	char	**cmd;
 	int	to_ret;
 	
+	sFlag = 0;
 	if ((to_ret = get_args(argc, argv, &cmd)) == 0)
 	{
 		fprintf(stderr, "USAGE:\n%s [command]\n%s [-p [pid]]\n", argv[0], argv[0]);

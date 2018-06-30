@@ -18,7 +18,8 @@ SRCS		= srcs/main.c		\
 		  srcs/output.c		\
 		  srcs/print.c		\
 		  srcs/printer.c	\
-		  srcs/syscalls.c
+		  srcs/syscalls.c	\
+		  srcs/condition.c
 
 OBJS		= $(SRCS:.c=.o)
 

@@ -11,7 +11,13 @@ pid_t	g_pid = -1;
 
 extern t_prototype	g_syscalls[];
 
-static int	step_instruction(pid_t pid, int *status)
+void			quitErr(char *str)
+{
+	fprintf(stderr, "s\n");
+	exit(84);
+}
+
+static int		step_instruction(pid_t pid, int *status)
 {
   	if (ptrace(PTRACE_SINGLESTEP, pid, NULL, NULL) == -1)
 	      	quitErr("trace PTRACE_SINGLESTEP error");
@@ -36,12 +42,7 @@ static int		analyse_syscall(struct user_regs_struct *regs, pid_t pid, int *statu
 	}
 	printRet(callNumber, g_syscalls[callNumber].ret_type, regs);
 	if (callNumber == 60 || callNumber == 231)
-	{
-		//printf(" was returned by tracee");
-		//system("echo -n $?");
-		// printf("\n");
 		exit(EXIT_SUCCESS);
-	}
 	return (1);
 }
 
@@ -60,7 +61,7 @@ static int		analyse_regs(struct user_regs_struct *regs, pid_t pid, int *status)
 	return (1);
 }
 
-int				trace(pid_t pid)
+int			trace(pid_t pid)
 {
 	struct user_regs_struct		regs;
 	int				status;

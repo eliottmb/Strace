@@ -24,6 +24,8 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
+extern int	sFlag;
+
 /*
 ** STRUCTS
 */
@@ -43,44 +45,52 @@ typedef struct	s_types
 }		t_types;
 
 /*
-** main.c
+** condition.c
 */
 
-void	handle_exit(int *status);
+unsigned long long	lowRegs(int nb_args, struct user_regs_struct *regs);
+unsigned long long	mediumRegs(int nb_args, struct user_regs_struct *regs);
+unsigned long long	highRegs(int nb_args, struct user_regs_struct *regs);
+void			printNothing(unsigned long long int regsVal);
 
 /*
-** launch_child.c
+** output.c
 */
-int	createChild(char **cmd);
+
+unsigned long long int	getGoodRegister(int nb_args, struct user_regs_struct *regs);
+void			printArg(char *type, int nb_args, struct user_regs_struct *regs);
+void			printRet(int nb_syscall, char *type, struct user_regs_struct *regs);
+void			printAllArgs(int nb_syscall, struct user_regs_struct *regs);
+int			printCall(int nb_syscall, struct user_regs_struct *regs);
 
 /*
-** print_syscalls.c
+** print.c
 */
-void	printAllArgs(int syscall_number, struct user_regs_struct *registers);
-void	printRet(int nb_syscall,
-			   char *type, struct user_regs_struct *registers);
-int	printCall(int syscall_number, struct user_regs_struct *registers);
+
+static void		printChar(char c);
+void			printStringPtr(unsigned long long int regsVal);
+void			printString(unsigned long long int regsVal);
+void			printStringTab(unsigned long long int regsVal);
+void			printNope(unsigned long long int regsVal);
 
 /*
-** print_types.c
+** printer.c
 */
-void	printInt(unsigned long long int register_value);
-void	printLong(unsigned long long int register_value);
-void	printUint(unsigned long long int register_value);
-void	printUlong(unsigned long long int register_value);
-void	printPointer(unsigned long long int register_value);
+
+void			printInt(unsigned long long int regs);
+void			printLong(unsigned long long int regs);
+void			printUint(unsigned long long int regs);
+void			printUlong(unsigned long long int regs);
+void			printPointer(unsigned long long int regs);
 
 /*
-** print_types2.c
+** strace.c
 */
-void	printString(unsigned long long int register_value);
-void	printStringTab(unsigned long long int register_value);
-void	printNope(unsigned long long int register_value);
-void	printNothing(unsigned long long int register_value);
 
-/*
-** trace.c
-*/
-int	trace(pid_t pid);
+void			quitErr(char *str);
+static int		step_instruction(pid_t pid, int *status);
+static int		analyse_syscall(struct user_regs_struct *regs, pid_t pid, int *status);
+static int		analyse_regs(struct user_regs_struct *regs, pid_t pid, int *status);
+int			trace(pid_t pid);
 
-#endif /* !STRACE_H_ */
+#endif /* __STRACE_H__ */
