@@ -54,6 +54,15 @@ unsigned long long	highRegs(int nb_args, struct user_regs_struct *regs);
 void			printNothing(unsigned long long int regsVal);
 
 /*
+** error.h
+*/
+
+void			checkStatus(int status);
+int			checkCall();
+void			checkRegs(struct user_regs_struct *regs);
+void			checkParamAdd(void *ptr);
+void			isGood();
+/*
 ** output.c
 */
 
@@ -88,9 +97,9 @@ void			printPointer(unsigned long long int regs);
 */
 
 void			quitErr(char *str);
-int			step_instruction(pid_t pid, int *status);
-int			analyse_syscall(struct user_regs_struct *regs, pid_t pid, int *status);
-int			analyse_regs(struct user_regs_struct *regs, pid_t pid, int *status);
+int			next(pid_t pid, int *status);
+int			getCall(struct user_regs_struct *regs, pid_t pid, int *status);
+int			getRegs(struct user_regs_struct *regs, pid_t pid, int *status);
 int			trace(pid_t pid);
 
 #endif /* __STRACE_H__ */

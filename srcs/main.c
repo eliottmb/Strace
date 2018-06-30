@@ -11,7 +11,7 @@ int	sFlag = 0;
 
 extern pid_t	g_pid;
 
-int	createChild(char **cmd)
+int	createTraced(char **cmd)
 {
 	if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) == -1)
 	{
@@ -41,7 +41,7 @@ static int	traceFork(char **cmd)
 		quitErr("fork error");
 	if (child == 0)
 	{
-		if (createChild(cmd) == 0)
+		if (createTraced(cmd) == 0)
 			exit(EXIT_FAILURE);
 	}
 	else
@@ -53,7 +53,7 @@ static int	traceFork(char **cmd)
 	return (1);
 }
 
-static int	get_args(int argc, char **av, char ***cmd)
+static int	checkArgs(int argc, char **av, char ***cmd)
 {
 	if (argc < 2)
 		return (0);
@@ -73,15 +73,17 @@ int	main(int argc, char **argv)
 	int	to_ret;
 	
 	sFlag = 0;
-	if ((to_ret = get_args(argc, argv, &cmd)) == 0)
+	if ((to_ret = checkArgs(argc, argv, &cmd)) == 0)
 	{
 		fprintf(stderr, "USAGE:\n%s [command]\n%s [-p [pid]]\n", argv[0], argv[0]);
 		return (EXIT_FAILURE);
 	}
+	isGood();
 	if (to_ret == 1)
 		to_ret = traceFork(cmd);
 	else
 		to_ret = tracePid(to_ret);
+	isGood();
 	if (to_ret == 0)
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);

@@ -26,6 +26,7 @@ void			printStringPtr(unsigned long long int regsVal)
 {
 	long	c = -1;
 
+	checkParamAdd(&regsVal);
 	c = ptrace(PTRACE_PEEKDATA, g_pid, regsVal, NULL);
 	printPointer(c);
 }
@@ -37,6 +38,7 @@ void			printString(unsigned long long int regsVal)
 	
 	i = 0;
 	c = -1;
+	checkParamAdd(&regsVal);
 	if (sFlag == 1)
 		printStringPtr(regsVal);
 	else
@@ -58,6 +60,7 @@ void			printStringTab(unsigned long long int regsVal)
 	
 	fprintf(stderr, "[");
 	i = 0;
+	checkParamAdd(&regsVal);
 	while ((void*)str != NULL && i < 6)
 	{
 		if ((str = ptrace(PTRACE_PEEKDATA, g_pid, regsVal, NULL)) == (unsigned long long)-1)
