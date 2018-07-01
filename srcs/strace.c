@@ -44,7 +44,7 @@ int		getCall(struct user_regs_struct *regs, pid_t pid, int *status)
 	}
 	sortRet(callNumber, g_syscalls[callNumber].ret_type, regs);
 	if (callNumber == 60 || callNumber == 231)
-		exit(EXIT_SUCCESS);
+		exit(0);
 	return (1);
 }
 

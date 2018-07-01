@@ -14,16 +14,13 @@ extern pid_t	g_pid;
 int	createTraced(char **cmd)
 {
 	if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) == -1)
-	{
 		quitErr("ptrace PTRACE_TRACEME error");
-		return (0);
-	}
 	if ((execvp(*cmd, cmd)) == -1)
 		quitErr("execvp error");
 	return (1);
 }
 
-static int	tracePid(pid_t pid)
+int	tracePid(pid_t pid)
 {
 	if (ptrace(PTRACE_ATTACH, pid, NULL, NULL) == -1)
 		quitErr("ptrace PTRACE_ATTACH error");
@@ -33,7 +30,7 @@ static int	tracePid(pid_t pid)
 	return (1);
 }
 
-static int	traceFork(char **cmd)
+int	traceFork(char **cmd)
 {
 	pid_t	child;
 
@@ -42,7 +39,7 @@ static int	traceFork(char **cmd)
 	if (child == 0)
 	{
 		if (createTraced(cmd) == 0)
-			exit(EXIT_FAILURE);
+			exit(84);
 	}
 	else
 	{
@@ -53,7 +50,7 @@ static int	traceFork(char **cmd)
 	return (1);
 }
 
-static int	checkArgs(int argc, char **av, char ***cmd)
+int	checkArgs(char ***cmd, int argc, char **av)
 {
 	if (argc < 2)
 		return (0);
@@ -73,10 +70,10 @@ int	main(int argc, char **argv)
 	int	to_ret;
 	
 	sFlag = 0;
-	if ((to_ret = checkArgs(argc, argv, &cmd)) == 0)
+	if ((to_ret = checkArgs(&cmd, argc, argv)) == 0)
 	{
 		fprintf(stderr, "USAGE:\n%s [command]\n%s [-p [pid]]\n", argv[0], argv[0]);
-		return (EXIT_FAILURE);
+		return (84);
 	}
 	isGood();
 	if (to_ret == 1)
@@ -85,6 +82,6 @@ int	main(int argc, char **argv)
 		to_ret = tracePid(to_ret);
 	isGood();
 	if (to_ret == 0)
-		return (EXIT_FAILURE);
-	return (EXIT_SUCCESS);
+		return (84);
+	return (0);
 }

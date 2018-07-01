@@ -17,7 +17,7 @@ SRCS		= srcs/main.c		\
 		  srcs/strace.c		\
 		  srcs/output.c		\
 		  srcs/print.c		\
-		  srcs/printer.c	\
+		  srcs/sort.c		\
 		  srcs/syscalls.c	\
 		  srcs/condition.c	\
 		  srcs/error.c

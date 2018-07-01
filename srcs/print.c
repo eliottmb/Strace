@@ -9,7 +9,7 @@
 
 extern pid_t	g_pid;
 
-static void		sortChar(char c)
+void		sortChar(char c)
 {
 	if (((c > 32 && c < 127) || c == ' ') && c != '\0')
 	{
