@@ -33,7 +33,7 @@ int		getCall(struct user_regs_struct *regs, pid_t pid, int *status)
 
 	callNumber = regs->rax;
 	checkStatus(status);
-  	if (callNumber > 313 || printCall(callNumber, regs) == 0)
+  	if (callNumber > 313 || sortCall(callNumber, regs) == 0)
 		return (checkCall());
 	if (callNumber != 60 && callNumber != 231)
 	{
@@ -42,7 +42,7 @@ int		getCall(struct user_regs_struct *regs, pid_t pid, int *status)
 		if (next(pid, status) == 0 || ptrace(PTRACE_GETREGS, pid, NULL, regs) == -1)
 		return (0);
 	}
-	printRet(callNumber, g_syscalls[callNumber].ret_type, regs);
+	sortRet(callNumber, g_syscalls[callNumber].ret_type, regs);
 	if (callNumber == 60 || callNumber == 231)
 		exit(EXIT_SUCCESS);
 	return (1);

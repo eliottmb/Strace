@@ -9,7 +9,7 @@
 
 extern sFLag;
 
-void	printInt(unsigned long long int regs)
+void	sortInt(unsigned long long int regs)
 {
 	checkParamAdd(&regs);
 	if (sFlag == 0)
@@ -19,7 +19,7 @@ void	printInt(unsigned long long int regs)
 	isGood();	
 }
 
-void	printLong(unsigned long long int regs)
+void	sortLong(unsigned long long int regs)
 {
 	checkParamAdd(&regs);
 	if (sFlag == 0)
@@ -28,7 +28,7 @@ void	printLong(unsigned long long int regs)
 		fprintf(stderr, "%p", (long *)regs);
 }
 
-void	printUint(unsigned long long int regs)
+void	sortUint(unsigned long long int regs)
 {
 	checkParamAdd(&regs);
 	if (sFlag == 0)
@@ -37,7 +37,7 @@ void	printUint(unsigned long long int regs)
 		fprintf(stderr, "%p", (unsigned int *)regs);
 }
 
-void	printUlong(unsigned long long int regs)
+void	sortUlong(unsigned long long int regs)
 {
 	checkParamAdd(&regs);
 	if (sFlag == 0)
@@ -46,7 +46,7 @@ void	printUlong(unsigned long long int regs)
 		fprintf(stderr, "%p", (unsigned long *)regs);
 }
 
-void	printPointer(unsigned long long int regs)
+void	sortPointer(unsigned long long int regs)
 {
 	checkParamAdd(&regs);
 	if (regs == 0)

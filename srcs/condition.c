@@ -34,7 +34,7 @@ unsigned long long	highRegs(int nb_args, struct user_regs_struct *regs)
 	return (0);
 }
 
-void			printNothing(unsigned long long int regsVal)
+void			sortNothing(unsigned long long int regsVal)
 {
 	return;
 }

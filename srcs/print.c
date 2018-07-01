@@ -9,7 +9,7 @@
 
 extern pid_t	g_pid;
 
-static void		printChar(char c)
+static void		sortChar(char c)
 {
 	if (((c > 32 && c < 127) || c == ' ') && c != '\0')
 	{
@@ -22,16 +22,16 @@ static void		printChar(char c)
 		fprintf(stderr, "\\%o", c);
 }
 
-void			printStringPtr(unsigned long long int regsVal)
+void			sortStringPtr(unsigned long long int regsVal)
 {
 	long	c = -1;
 
 	checkParamAdd(&regsVal);
 	c = ptrace(PTRACE_PEEKDATA, g_pid, regsVal, NULL);
-	printPointer(c);
+	sortPointer(c);
 }
 
-void			printString(unsigned long long int regsVal)
+void			sortString(unsigned long long int regsVal)
 {
 	int	i;
 	long	c;
@@ -40,20 +40,20 @@ void			printString(unsigned long long int regsVal)
 	c = -1;
 	checkParamAdd(&regsVal);
 	if (sFlag == 1)
-		printStringPtr(regsVal);
+		sortStringPtr(regsVal);
 	else
 	{
 		for (int i = 0; ((char)c != '\0' && i < 42); i = i + 1)
 		{
 			if ((c = ptrace(PTRACE_PEEKDATA, g_pid, regsVal, NULL)) == -1)
 				quitErr("ptrace PTRACE_PEEK_DATA error\n");
-			printChar(c);
+			sortChar(c);
 			++regsVal;
 		}
 	}
 }
 
-void			printStringTab(unsigned long long int regsVal)
+void			sortStringTab(unsigned long long int regsVal)
 {
 	unsigned long long	str;
 	int			i;
@@ -69,7 +69,7 @@ void			printStringTab(unsigned long long int regsVal)
 			return ;
 		}
 		if (str)
-		printString(str);
+		sortString(str);
 		regsVal += sizeof(char*);
 		++i;
 	}
@@ -78,7 +78,7 @@ void			printStringTab(unsigned long long int regsVal)
 	fprintf(stderr, " ... ");
 }
 
-void			printNope(unsigned long long int regsVal)
+void			sortNope(unsigned long long int regsVal)
 {
 	fprintf(stderr, "unimplemented");
 }

@@ -23,7 +23,7 @@ unsigned long long int	getGoodRegister(int nb_args, struct user_regs_struct *reg
 }
 
 
-void			printArg(char *type, int nb_args, struct user_regs_struct *regs)
+void			sortArg(char *type, int nb_args, struct user_regs_struct *regs)
 {
 	int	i = 0;
 	
@@ -31,7 +31,7 @@ void			printArg(char *type, int nb_args, struct user_regs_struct *regs)
 	{
 		if (nb_args != -1)
 			fprintf(stderr, "\"");
-		printPointer(getGoodRegister(nb_args, regs));
+		sortPointer(getGoodRegister(nb_args, regs));
 		if (nb_args != -1)
 			fprintf(stderr, "\"");
 	}
@@ -41,13 +41,13 @@ void			printArg(char *type, int nb_args, struct user_regs_struct *regs)
 			++i;
 		if (nb_args != -1)
 			fprintf(stderr, "\"");
-		g_types[i].printFct(getGoodRegister(nb_args, regs));
+		g_types[i].sortFct(getGoodRegister(nb_args, regs));
 		if (nb_args != -1)
 			fprintf(stderr, "\"");
 	}
 }
 
-void			printRet(int nb_syscall, char *type, struct user_regs_struct *regs)
+void			sortRet(int nb_syscall, char *type, struct user_regs_struct *regs)
 {
 	fprintf(stderr, ") = ");
 	if (nb_syscall != 60 && nb_syscall != 231)
@@ -55,30 +55,30 @@ void			printRet(int nb_syscall, char *type, struct user_regs_struct *regs)
 		if ((long long)regs->rax < 0)
 			fprintf(stderr, "-1 (%s)", strerror(-regs->rax));
 		else
-			printArg(type, -1, regs);
+			sortArg(type, -1, regs);
 	}
 	else
 		fprintf(stderr, "?");
 	(void)fprintf(stderr, "\n");
 }
 
-void			printAllArgs(int nb_syscall, struct user_regs_struct *regs)
+void			sortAllArgs(int nb_syscall, struct user_regs_struct *regs)
 {
 	int	i = 0;
 
 	for (int i = 0; i < g_syscalls[nb_syscall].nb_params - 1; i++)
 	{
-		printArg(g_syscalls[nb_syscall].params[i], i, regs);
+		sortArg(g_syscalls[nb_syscall].params[i], i, regs);
 		fprintf(stderr, ", ");
 	}
-	printArg(g_syscalls[nb_syscall].params[i], i, regs);
+	sortArg(g_syscalls[nb_syscall].params[i], i, regs);
 }
 
-int			printCall(int nb_syscall, struct user_regs_struct *regs)
+int			sortCall(int nb_syscall, struct user_regs_struct *regs)
 {
 	(void *)regs;
 
 	fprintf(stderr, "%s(", g_syscalls[nb_syscall].name);
-	printAllArgs(nb_syscall, regs);
+	sortAllArgs(nb_syscall, regs);
 	return (1);
 }

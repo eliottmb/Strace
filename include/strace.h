@@ -41,7 +41,7 @@ typedef struct	s_prototype
 typedef struct	s_types
 {
   char		*name;
-  void		(*printFct)(unsigned long long int register_value);
+  void		(*sortFct)(unsigned long long int register_value);
 }		t_types;
 
 /*
@@ -51,7 +51,7 @@ typedef struct	s_types
 unsigned long long	lowRegs(int nb_args, struct user_regs_struct *regs);
 unsigned long long	mediumRegs(int nb_args, struct user_regs_struct *regs);
 unsigned long long	highRegs(int nb_args, struct user_regs_struct *regs);
-void			printNothing(unsigned long long int regsVal);
+void			sortNothing(unsigned long long int regsVal);
 
 /*
 ** error.h
@@ -67,30 +67,30 @@ void			isGood();
 */
 
 unsigned long long int	getGoodRegister(int nb_args, struct user_regs_struct *regs);
-void			printArg(char *type, int nb_args, struct user_regs_struct *regs);
-void			printRet(int nb_syscall, char *type, struct user_regs_struct *regs);
-void			printAllArgs(int nb_syscall, struct user_regs_struct *regs);
-int			printCall(int nb_syscall, struct user_regs_struct *regs);
+void			sortArg(char *type, int nb_args, struct user_regs_struct *regs);
+void			sortRet(int nb_syscall, char *type, struct user_regs_struct *regs);
+void			sortAllArgs(int nb_syscall, struct user_regs_struct *regs);
+int			sortCall(int nb_syscall, struct user_regs_struct *regs);
 
 /*
 ** print.c
 */
 
-static void		printChar(char c);
-void			printStringPtr(unsigned long long int regsVal);
-void			printString(unsigned long long int regsVal);
-void			printStringTab(unsigned long long int regsVal);
-void			printNope(unsigned long long int regsVal);
+static void		sortChar(char c);
+void			sortStringPtr(unsigned long long int regsVal);
+void			sortString(unsigned long long int regsVal);
+void			sortStringTab(unsigned long long int regsVal);
+void			sortNope(unsigned long long int regsVal);
 
 /*
 ** printer.c
 */
 
-void			printInt(unsigned long long int regs);
-void			printLong(unsigned long long int regs);
-void			printUint(unsigned long long int regs);
-void			printUlong(unsigned long long int regs);
-void			printPointer(unsigned long long int regs);
+void			sortInt(unsigned long long int regs);
+void			sortLong(unsigned long long int regs);
+void			sortUint(unsigned long long int regs);
+void			sortUlong(unsigned long long int regs);
+void			sortPointer(unsigned long long int regs);
 
 /*
 ** strace.c
@@ -101,5 +101,6 @@ int			next(pid_t pid, int *status);
 int			getCall(struct user_regs_struct *regs, pid_t pid, int *status);
 int			getRegs(struct user_regs_struct *regs, pid_t pid, int *status);
 int			trace(pid_t pid);
+
 
 #endif /* __STRACE_H__ */
