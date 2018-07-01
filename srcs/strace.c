@@ -9,7 +9,7 @@
 
 pid_t	g_pid = -1;
 
-extern t_prototype	g_syscalls[];
+extern t_calls	g_calls[];
 
 void		quitErr(char *str)
 {
@@ -42,7 +42,7 @@ int		getCall(struct user_regs_struct *regs, pid_t pid, int *status)
 		if (next(pid, status) == 0 || ptrace(PTRACE_GETREGS, pid, NULL, regs) == -1)
 		return (0);
 	}
-	sortRet(callNumber, g_syscalls[callNumber].ret_type, regs);
+	sortRet(callNumber, g_calls[callNumber].ret_type, regs);
 	if (callNumber == 60 || callNumber == 231)
 		exit(0);
 	return (1);

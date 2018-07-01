@@ -7,8 +7,8 @@
 
 #include "strace.h"
 
-extern t_prototype	g_syscalls[];
-extern t_types		g_types[];
+extern t_calls		g_calls[];
+extern t_fctTab		g_params[];
 
 
 unsigned long long int	getGoodRegister(int nb_args, struct user_regs_struct *regs)
@@ -37,11 +37,11 @@ void			sortArg(char *type, int nb_args, struct user_regs_struct *regs)
 	}
 	else
 	{
-		while (g_types[i + 1].name != NULL && strcmp(g_types[i].name, type))
+		while (g_params[i + 1].name != NULL && strcmp(g_params[i].name, type))
 			++i;
 		if (nb_args != -1)
 			fprintf(stderr, "\"");
-		g_types[i].sortFct(getGoodRegister(nb_args, regs));
+		g_params[i].sortFct(getGoodRegister(nb_args, regs));
 		if (nb_args != -1)
 			fprintf(stderr, "\"");
 	}
@@ -66,19 +66,19 @@ void			sortAllArgs(int nb_syscall, struct user_regs_struct *regs)
 {
 	int	i = 0;
 
-	for (int i = 0; i < g_syscalls[nb_syscall].nb_params - 1; i++)
+	for (int i = 0; i < g_calls[nb_syscall].nb_params - 1; i++)
 	{
-		sortArg(g_syscalls[nb_syscall].params[i], i, regs);
+		sortArg(g_calls[nb_syscall].params[i], i, regs);
 		fprintf(stderr, ", ");
 	}
-	sortArg(g_syscalls[nb_syscall].params[i], i, regs);
+	sortArg(g_calls[nb_syscall].params[i], i, regs);
 }
 
 int			sortCall(int nb_syscall, struct user_regs_struct *regs)
 {
 	(void *)regs;
 
-	fprintf(stderr, "%s(", g_syscalls[nb_syscall].name);
+	fprintf(stderr, "%s(", g_calls[nb_syscall].name);
 	sortAllArgs(nb_syscall, regs);
 	return (1);
 }

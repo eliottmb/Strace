@@ -7,7 +7,7 @@
 
 #include "strace.h"
 
-const t_types	g_types[] =  {
+const t_fctTab	g_params[] =  {
 	{"void", &sortNothing},
 	{"char *", &sortString},
 	{"char **", &sortStringTab},
@@ -44,7 +44,7 @@ const t_types	g_types[] =  {
 	{NULL, NULL}
 };
 
-const t_prototype	g_syscalls[] =
+const t_calls	g_calls[] =
 {
 	{"read", 3, {"int", "char *", "size_t"}, "ssize_t"},
 	{"write", 3, {"int", "char *", "size_t"}, "ssize_t"},

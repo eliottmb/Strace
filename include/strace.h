@@ -22,19 +22,19 @@
 
 extern int	sFlag;
 
-typedef struct	s_prototype
+typedef struct	s_calls
 {
 	char	*name;
 	int	nb_params;
 	char	*params[6];
 	char	*ret_type;
-}		t_prototype;
+}		t_calls;
 
-typedef struct	s_types
+typedef struct	s_fctTab
 {
 	char	*name;
 	void	(*sortFct)(unsigned long long int regs);
-}		t_types;
+}		t_fctTab;
 
 unsigned long long	lowRegs(int nb_args, struct user_regs_struct *regs);
 unsigned long long	mediumRegs(int nb_args, struct user_regs_struct *regs);
